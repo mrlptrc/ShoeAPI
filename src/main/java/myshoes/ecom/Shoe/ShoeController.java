@@ -1,4 +1,5 @@
 package myshoes.ecom.Shoe;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,36 +9,39 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/shoes")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ShoeController {
+
     @Autowired
     private ShoeService shoeService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShoeModel> getShoe(@PathVariable Long id) {
-        Optional<ShoeModel> shoe = shoeService.getShoe(id);
+    public ResponseEntity<ShoeDTO> getShoe(@PathVariable ObjectId id) {
+        Optional<ShoeDTO> shoe = shoeService.getShoe(id);
         return shoe.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ShoeModel>> getAllShoes() {
-        List<ShoeModel> shoeList = shoeService.getAllShoes();
+    public ResponseEntity<List<ShoeDTO>> getAllShoes() {
+        List<ShoeDTO> shoeList = shoeService.getAllShoes();
         return ResponseEntity.ok(shoeList);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ShoeModel> createShoe(@RequestBody ShoeModel shoe) {
-        ShoeModel newShoe = shoeService.createShoe(shoe);
+    public ResponseEntity<ShoeDTO> createShoe(@RequestBody ShoeModel shoe) {
+        ShoeDTO newShoe = shoeService.createShoe(shoe);
         return ResponseEntity.status(HttpStatus.CREATED).body(newShoe);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ShoeModel> updateShoe(@PathVariable Long id, @RequestBody ShoeModel updatedShoe) {
-        Optional<ShoeModel> optionalShoe = shoeService.updateShoe(id, updatedShoe);
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<ShoeDTO> updateShoe(@PathVariable ObjectId id, @RequestBody ShoeDTO updatedShoe) {
+        Optional<ShoeDTO> optionalShoe = shoeService.updateShoe(id, updatedShoe);
         return optionalShoe.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteShoe(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteShoe(@PathVariable ObjectId id) {
         if (shoeService.deleteShoe(id)) {
             return ResponseEntity.noContent().build();
         } else {
