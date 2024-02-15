@@ -1,8 +1,9 @@
 package myshoes.ecom.Shoe;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +15,8 @@ public class ShoeService {
     @Autowired
     private MongoShoeRepository shoeRepository;
 
-    public Optional<ShoeDTO> getShoe(ObjectId id) {
+    @SuppressWarnings("null")
+    public Optional<ShoeDTO> getShoe(String id) {
         return shoeRepository.findById(id).map(this::convertToDTO);
     }
 
@@ -24,12 +26,18 @@ public class ShoeService {
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("null")
     public ShoeDTO createShoe(ShoeModel shoe) {
+        if (shoeRepository.existsById(shoe.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "ID " + shoe.getId() + " already exists");
+        }
         ShoeModel savedShoe = shoeRepository.save(shoe);
         return convertToDTO(savedShoe);
     }
 
-    public Optional<ShoeDTO> updateShoe(ObjectId id, ShoeDTO updatedShoe) {
+    public Optional<ShoeDTO> updateShoe(String id, ShoeDTO updatedShoe) {
+        @SuppressWarnings("null")
         Optional<ShoeModel> optionalShoe = shoeRepository.findById(id);
         if (optionalShoe.isPresent()) {
             ShoeModel existingShoe = optionalShoe.get();
@@ -42,7 +50,8 @@ public class ShoeService {
         return Optional.empty();
     }
 
-    public boolean deleteShoe(ObjectId id) {
+    @SuppressWarnings("null")
+    public boolean deleteShoe(String id) {
         if (shoeRepository.existsById(id)) {
             shoeRepository.deleteById(id);
             return true;
@@ -52,10 +61,9 @@ public class ShoeService {
 
     private ShoeDTO convertToDTO(ShoeModel shoeModel) {
         return new ShoeDTO(
-                shoeModel.getId().toString(),
+                shoeModel.getId(),
                 shoeModel.getBrand(),
                 shoeModel.getModel(),
-                shoeModel.getPrice()
-        );
+                shoeModel.getPrice());
     }
 }

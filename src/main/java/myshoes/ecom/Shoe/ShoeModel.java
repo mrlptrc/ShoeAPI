@@ -1,27 +1,25 @@
 package myshoes.ecom.Shoe;
-import org.bson.types.ObjectId;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
 @Document(collection = "shoes")
 public class ShoeModel {
 
-
     @Id
-    private ObjectId id;
-    @Indexed(unique=true)
+    private String id;
+    @Indexed(unique = true)
 
     private String brand;
     private String model;
     private double price;
 
-    public ObjectId getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    public void setId(String id) {
         this.id = id;
     }
 

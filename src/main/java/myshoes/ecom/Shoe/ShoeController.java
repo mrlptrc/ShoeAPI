@@ -1,5 +1,5 @@
 package myshoes.ecom.Shoe;
-import org.bson.types.ObjectId;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public class ShoeController {
     private ShoeService shoeService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShoeDTO> getShoe(@PathVariable ObjectId id) {
+    public ResponseEntity<ShoeDTO> getShoe(@PathVariable String id) {
         Optional<ShoeDTO> shoe = shoeService.getShoe(id);
         return shoe.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -35,13 +35,13 @@ public class ShoeController {
 
     @PutMapping("/update/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
-    public ResponseEntity<ShoeDTO> updateShoe(@PathVariable ObjectId id, @RequestBody ShoeDTO updatedShoe) {
+    public ResponseEntity<ShoeDTO> updateShoe(@PathVariable String id, @RequestBody ShoeDTO updatedShoe) {
         Optional<ShoeDTO> optionalShoe = shoeService.updateShoe(id, updatedShoe);
         return optionalShoe.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteShoe(@PathVariable ObjectId id) {
+    public ResponseEntity<Void> deleteShoe(@PathVariable String id) {
         if (shoeService.deleteShoe(id)) {
             return ResponseEntity.noContent().build();
         } else {
