@@ -28,13 +28,13 @@ public class ShoeService {
 
     @SuppressWarnings("null")
     public ShoeDTO createShoe(ShoeModel shoe) {
-        if (shoeRepository.existsById(shoe.getId())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "ID " + shoe.getId() + " already exists");
+        if (shoeRepository.findById(shoe.getId()).isPresent()) {
+            throw new IllegalArgumentException("ID " + shoe.getId() + " already exists");
         }
-        ShoeModel savedShoe = shoeRepository.save(shoe);
-        return convertToDTO(savedShoe);
-    }
+    ShoeModel savedShoe = shoeRepository.save(shoe);
+    return convertToDTO(savedShoe);
+}
+
 
     public Optional<ShoeDTO> updateShoe(String id, ShoeDTO updatedShoe) {
         @SuppressWarnings("null")
