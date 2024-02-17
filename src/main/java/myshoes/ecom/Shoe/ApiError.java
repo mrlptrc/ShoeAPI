@@ -10,8 +10,6 @@ public class ApiError {
     private String message;
     private String path;
 
-    // getters and setters
-
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
@@ -52,4 +50,3 @@ public class ApiError {
         return this.path;
     }
 }
-

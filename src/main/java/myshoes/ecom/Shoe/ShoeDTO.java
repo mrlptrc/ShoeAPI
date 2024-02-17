@@ -6,7 +6,7 @@ public class ShoeDTO {
     private String model;
     private double price;
 
-    public ShoeDTO(String id, String brand, String model, double price) {
+    public ShoeDTO(String id, String brand, String string, double price) {
         this.id = id;
         this.brand = brand;
         this.model = model;

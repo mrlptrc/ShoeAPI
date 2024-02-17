@@ -15,6 +15,13 @@ public class ShoeModel {
     private String model;
     private double price;
 
+    public ShoeModel(String id, String brand, String model, double price) {
+        this.id = id;
+        this.brand = brand;
+        this.model = model;
+        this.price = price;
+    }
+    
     public String getId() {
         return id;
     }

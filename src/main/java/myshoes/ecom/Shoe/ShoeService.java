@@ -1,9 +1,7 @@
 package myshoes.ecom.Shoe;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,39 +29,57 @@ public class ShoeService {
         if (shoeRepository.findById(shoe.getId()).isPresent()) {
             throw new IllegalArgumentException("ID " + shoe.getId() + " already exists");
         }
-    ShoeModel savedShoe = shoeRepository.save(shoe);
-    return convertToDTO(savedShoe);
-}
+        ShoeModel savedShoe = shoeRepository.save(shoe);
+        return convertToDTO(savedShoe);
+    }
 
-
+    @SuppressWarnings("null")
     public Optional<ShoeDTO> updateShoe(String id, ShoeDTO updatedShoe) {
-        @SuppressWarnings("null")
-        Optional<ShoeModel> optionalShoe = shoeRepository.findById(id);
-        if (optionalShoe.isPresent()) {
-            ShoeModel existingShoe = optionalShoe.get();
-            existingShoe.setBrand(updatedShoe.getBrand());
-            existingShoe.setModel(updatedShoe.getModel());
-            existingShoe.setPrice(updatedShoe.getPrice());
-            ShoeModel savedShoe = shoeRepository.save(existingShoe);
-            return Optional.of(convertToDTO(savedShoe));
+        validateUpdatedShoe(updatedShoe);
+
+        return shoeRepository.findById(id)
+                .map(existingShoe -> updateAndSaveShoe(existingShoe, updatedShoe))
+                .map(this::convertToDTO);
+    }
+
+    private void validateUpdatedShoe(ShoeDTO updatedShoe) {
+        Double price = updatedShoe.getPrice();
+
+        if (updatedShoe.getBrand() == null || updatedShoe.getBrand().isEmpty()) {
+            throw new IllegalArgumentException("Brand is missing");
         }
-        return Optional.empty();
+        if (updatedShoe.getModel() == null || updatedShoe.getModel().isEmpty()) {
+            throw new IllegalArgumentException("Model is missing");
+        }
+        if (price == -1) {
+            throw new IllegalArgumentException("Price is missing");
+        }
+    }
+
+    private ShoeModel updateAndSaveShoe(ShoeModel existingShoe, ShoeDTO updatedShoe) {
+        existingShoe.setBrand(updatedShoe.getBrand());
+        existingShoe.setModel(updatedShoe.getModel());
+        existingShoe.setPrice(updatedShoe.getPrice());
+
+        return shoeRepository.save(existingShoe);
     }
 
     @SuppressWarnings("null")
     public boolean deleteShoe(String id) {
-        if (shoeRepository.existsById(id)) {
-            shoeRepository.deleteById(id);
-            return true;
+        if (!shoeRepository.existsById(id)) {
+            throw new IllegalArgumentException("The ID cannot be deleted because it's already deleted");
         }
+        shoeRepository.deleteById(id);
         return false;
     }
 
-    private ShoeDTO convertToDTO(ShoeModel shoeModel) {
-        return new ShoeDTO(
-                shoeModel.getId(),
-                shoeModel.getBrand(),
-                shoeModel.getModel(),
-                shoeModel.getPrice());
+    public ShoeDTO convertToDTO(ShoeModel shoeModel) {
+        ShoeDTO shoeDTO = new ShoeDTO("", "", "", 0);
+        shoeDTO.setId(shoeModel.getId());
+        shoeDTO.setBrand(shoeModel.getBrand());
+        shoeDTO.setModel(shoeModel.getModel());
+        shoeDTO.setPrice(shoeModel.getPrice());
+        return shoeDTO;
     }
+    
 }

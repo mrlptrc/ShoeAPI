@@ -10,7 +10,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
 
-
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -21,9 +20,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         apiError.setStatus(HttpStatus.BAD_REQUEST.value());
         apiError.setError("Bad request");
         apiError.setMessage(ex.getMessage());
-        apiError.setPath(((ServletWebRequest)request).getRequest().getRequestURI());
+        apiError.setPath(((ServletWebRequest) request).getRequest().getRequestURI());
 
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 }
-
