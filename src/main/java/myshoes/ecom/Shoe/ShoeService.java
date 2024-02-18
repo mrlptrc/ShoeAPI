@@ -81,5 +81,26 @@ public class ShoeService {
         shoeDTO.setPrice(shoeModel.getPrice());
         return shoeDTO;
     }
+
+    public List<ShoeDTO> searchResult(String keyword, boolean exactMatch) {
+        List<ShoeModel> shoes;
+        if (exactMatch) {
+            shoes = shoeRepository.findByBrand(keyword);
+            shoes.addAll(shoeRepository.findByModel(keyword));
+        } else {
+            shoes = shoeRepository.findByBrandContaining(keyword);
+            shoes.addAll(shoeRepository.findByModelContaining(keyword));
+        }
+    
+        if (shoes.isEmpty()) {
+            throw new IllegalArgumentException("Brand " + keyword + " does not exist on database");
+        }
+    
+        return shoes.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
+    
     
 }

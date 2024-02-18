@@ -48,4 +48,10 @@ public class ShoeController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/search")
+    public List<ShoeDTO> searchShoes(@RequestParam String keyword,
+            @RequestParam(defaultValue = "false") boolean exactMatch) {
+        return shoeService.searchResult(keyword, exactMatch);
+    }
 }
