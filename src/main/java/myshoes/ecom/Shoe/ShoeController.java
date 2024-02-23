@@ -42,10 +42,11 @@ public class ShoeController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteShoe(@PathVariable String id) {
-        if (shoeService.deleteShoe(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
+        boolean deleted = shoeService.deleteShoe(id);
+        if (deleted) {
             return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.noContent().build();
         }
     }
 

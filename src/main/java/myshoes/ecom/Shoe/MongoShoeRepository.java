@@ -9,5 +9,7 @@ public interface MongoShoeRepository extends MongoRepository<ShoeModel, String> 
     List<ShoeModel> findByModel(String model);
     List<ShoeModel> findByBrandContaining(String keyword);
     List<ShoeModel> findByModelContaining(String keyword);
+
+    List<ShoeModel> findByBrandContainingOrModelContaining(String keyword, String keyword1);
 }
 

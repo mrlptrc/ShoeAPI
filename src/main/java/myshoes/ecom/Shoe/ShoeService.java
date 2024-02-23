@@ -21,7 +21,7 @@ public class ShoeService {
     public List<ShoeDTO> getAllShoes() {
         return shoeRepository.findAll().stream()
                 .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @SuppressWarnings("null")
@@ -88,19 +88,17 @@ public class ShoeService {
             shoes = shoeRepository.findByBrand(keyword);
             shoes.addAll(shoeRepository.findByModel(keyword));
         } else {
-            shoes = shoeRepository.findByBrandContaining(keyword);
-            shoes.addAll(shoeRepository.findByModelContaining(keyword));
+            shoes = shoeRepository.findByBrandContainingOrModelContaining(keyword, keyword);
         }
-    
-        if (shoes.isEmpty()) {
+
+        List<ShoeModel> separateShoes = shoes.stream().distinct().collect(Collectors.toList());
+
+        if (separateShoes.isEmpty()) {
             throw new IllegalArgumentException("Brand " + keyword + " does not exist on database");
         }
-    
-        return shoes.stream()
+
+        return separateShoes.stream()
                 .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
-    
-    
-    
 }
