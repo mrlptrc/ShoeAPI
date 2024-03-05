@@ -11,7 +11,6 @@ import java.util.Optional;
 @RequestMapping("/shoes")
 @CrossOrigin(origins = "http://localhost:4200")
 public class ShoeController {
-
     @Autowired
     private ShoeService shoeService;
 

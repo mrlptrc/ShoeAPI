@@ -1,4 +1,6 @@
 package myshoes.ecom.Shoe;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +28,20 @@ public class ShoeService {
 
     @SuppressWarnings("null")
     public ShoeDTO createShoe(ShoeModel shoe) {
+        shoe.setId("");
         if (shoeRepository.findById(shoe.getId()).isPresent()) {
             throw new IllegalArgumentException("ID " + shoe.getId() + " already exists");
         }
+
+        Iterable<ShoeModel> shoeList = shoeRepository.findAll(Sort.by(Sort.Order.desc("id")));
+        ShoeModel lastShoe = shoeList.iterator().next();
+        String lastId = lastShoe.getId();
+        int lastIdInt = Integer.parseInt(lastId);
+        int IdSum = lastIdInt + 1;
+        String newId = String.valueOf(IdSum);
+
+        shoe.setId(newId);
+
         ShoeModel savedShoe = shoeRepository.save(shoe);
         return convertToDTO(savedShoe);
     }
