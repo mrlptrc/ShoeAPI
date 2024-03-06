@@ -1,10 +1,12 @@
 package myshoes.ecom.Shoe;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,19 +28,19 @@ public class ShoeService {
                 .toList();
     }
 
-    @SuppressWarnings("null")
     public ShoeDTO createShoe(ShoeModel shoe) {
-        shoe.setId("");
-        if (shoeRepository.findById(shoe.getId()).isPresent()) {
-            throw new IllegalArgumentException("ID " + shoe.getId() + " already exists");
-        }
+        Optional<ShoeModel> lastShoeOpt = shoeRepository.findAll().stream()
+                .max(Comparator.comparing(ShoeModel::getId));
 
-        Iterable<ShoeModel> shoeList = shoeRepository.findAll(Sort.by(Sort.Order.desc("id")));
-        ShoeModel lastShoe = shoeList.iterator().next();
-        String lastId = lastShoe.getId();
-        int lastIdInt = Integer.parseInt(lastId);
-        int IdSum = lastIdInt + 1;
-        String newId = String.valueOf(IdSum);
+        String newId;
+        if (lastShoeOpt.isPresent()) {
+            String lastId = lastShoeOpt.get().getId();
+            int lastIdInt = Integer.parseInt(lastId);
+            int idSum = lastIdInt + 1;
+            newId = String.valueOf(idSum);
+        } else {
+            newId = "1";
+        }
 
         shoe.setId(newId);
 
