@@ -11,7 +11,6 @@ class EcomApplicationTests {
 
 	@Test
 	void contextLoads() {
-		// Test if the application context loads successfully
 		ApplicationContext context = SpringApplication.run(EcomApplication.class);
 		assertNotNull(context);
 	}
